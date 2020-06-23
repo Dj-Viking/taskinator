@@ -5,6 +5,7 @@ var formEl = document.querySelector("#task-form");
 var buttonEl = document.querySelector("#save-task");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
 var taskNameInput = document.querySelector("input[name='task-name']");
+var taskIdCounter = 0;
 //taskNameInput = "here is the string stored in taskNameInput variable";
 //check if its working  
 //console.log(taskNameInput);
@@ -51,21 +52,71 @@ function createTaskEl(taskDataObj){
     var listItemEl = document.createElement("li");
     //assigning the CSS class to HTML element we created <li>
     listItemEl.className = "task-item";//not entering any text here just creating the list item to contain something inside it
-    
+    //add task id as a custom attribute
+    listItemEl.setAttribute("data-task-id", taskIdCounter);
+    //listItemEl.textContent = "Task # " + taskIdCounter;
+    console.log("task Id: " + taskIdCounter);
+
     //create a <div> container in the HTML to store the task type 
     var taskInfoEl = document.createElement("div");
     //class for the <div> we created
     taskInfoEl.className = "task-info";
-
     //this will set up the dynamic injection of the HTML content into the newly created div to contain the tasktype
     taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
-    
     //inject the innerHTML stored inside the variable taskInfoEl
     listItemEl.appendChild(taskInfoEl);
-
+    
+    var taskActionsEl = createTaskActions(taskIdCounter);
+    console.log(taskActionsEl);
+    listItemEl.appendChild(taskActionsEl);
     //finally inject the <div> that contains all of the items that consist of the task-type that we want to inject
     //this will push the new list item Child element that we generated above into the HTML Parent element that we want it in.
     tasksToDoEl.appendChild(listItemEl);
+
+    //increase task counter for next unique id
+    taskIdCounter++;
+}
+
+function createTaskActions(taskId){
+    //create container for these new task actions
+    var actionContainerEl = document.createElement("div");
+    actionContainerEl.className = "task-actions";
+    
+    //create edit button
+    var editButtonEl = document.createElement("button");
+    editButtonEl.textContent = "Edit";
+    editButtonEl.className = "btn edit-btn";
+    editButtonEl.setAttribute("data-task-id", taskId);
+
+    actionContainerEl.appendChild(editButtonEl);
+
+    //create delete button
+    var deleteButtonEl = document.createElement("button");
+    deleteButtonEl.textContent = "Delete";
+    deleteButtonEl.className = "btn delete-btn";
+    deleteButtonEl.setAttribute("data-task-id", taskId);
+
+    actionContainerEl.appendChild(deleteButtonEl);
+
+    var statusSelectEl = document.createElement("select");
+    statusSelectEl.className = "select-status";
+    statusSelectEl.setAttribute("name", "status-change");
+    statusSelectEl.setAttribute("data-task-id", taskId);
+
+    actionContainerEl.appendChild(statusSelectEl);
+
+    var statusChoices = ["To Do", "In Progress", "Completed"]
+
+    for (var i = 0; i < statusChoices.length; i++){
+        //create option element
+        var statusOptionEl = document.createElement("option");
+        statusOptionEl.textContent = statusChoices[i];
+        statusOptionEl.setAttribute("value", statusChoices[i]);
+
+        //append to select
+        statusSelectEl.appendChild(statusOptionEl);
+    }
+    return actionContainerEl;
 }
 
 formEl.addEventListener("submit", taskFormHandler);
