@@ -11,7 +11,7 @@ var taskNameInput = document.querySelector("input[name='task-name']");
 
 function taskFormHandler(event){
     event.preventDefault();
-
+    
     //cool it works. this will store whatever value we type into the text field to be stored into this variable.
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     //checking if its working
@@ -19,16 +19,23 @@ function taskFormHandler(event){
     //this is attaching the task type that we select from the dropdown menu 
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
     console.log(taskTypeInput);//check if its storing correctly
-
+    
     //package up data as an object
     //this is passed into the parameter (event) from the function argument below (taskDataObj)
     var taskDataObj =
     {
         name: taskNameInput,
         type: taskTypeInput
-    
+        
     };
-
+    //check if input values are empty strings
+    //if the strings entered are NOT filled out or empty it is considered a falsy value
+    //if its NOT true that a string is entered essentially
+    if(!taskNameInput || !taskTypeInput){
+        alert("You need to enter something to submit into the task form.")
+        formEl.reset();//this must be placed before the return statement!!
+        return false;
+    }
     createTaskEl(taskDataObj);
     //ORDER IS IMPORTANT AND SPELLING TOO
     console.log(event);
