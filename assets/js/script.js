@@ -33,7 +33,7 @@ function taskFormHandler(event){
     //if its NOT true that a string is entered essentially
     if(!taskNameInput || !taskTypeInput){
         alert("You need to enter something to submit into the task form.")
-        formEl.reset();//this must be placed before the return statement!!
+        formEl.reset();//this must be placed before the return statement!!`
         return false;
     }
     createTaskEl(taskDataObj);
@@ -44,7 +44,7 @@ function taskFormHandler(event){
 
 // function createTaskEl(taskDataObj){
 
-// }
+// 
 
 function createTaskEl(taskDataObj){
     //dynamically creates a new <li> element inside existing HTML code
