@@ -16,9 +16,9 @@
             <p>
                 Click the button below to add a new task!
             </p>
-            <form id="task-form">
+            <form id="task-form" autocomplete="off">
                 <div class="form-group">
-                    <input type="text" name="task name" class="text-input" placeholder="Enter Task Name"/>
+                    <input type="text" name="task-name" class="text-input" placeholder="Enter Task Name"/>
                     <select name="task-type" class="select-dropdown">
                         <option value="" disabled selected>Pick a task type</option>
                         <option value="Print">Print</option>
@@ -37,9 +37,10 @@
                     Tasks To Do
                 </h2>
                 <ul class="task-list" id="tasks-to-do">
-                    <li class="task-item">
-                        A task is going to be added soon!
-                    </li>
+                    <!-- <li class="task-item">
+                        test placeholder 
+                         A task is going to be added soon! 
+                    </li> -->
                 </ul>
             </section>
         </main>
