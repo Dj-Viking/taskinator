@@ -1,15 +1,16 @@
 console.dir(window.document);
 
-
 var formEl = document.querySelector("#task-form");
 var buttonEl = document.querySelector("#save-task");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
+var pageContentEl = document.querySelector("#page-content");
 var taskNameInput = document.querySelector("input[name='task-name']");
 var taskIdCounter = 0;
 //taskNameInput = "here is the string stored in taskNameInput variable";
 //check if its working  
 //console.log(taskNameInput);
 
+//function that handles the event of clicking which injects the content into a section
 function taskFormHandler(event){
     event.preventDefault();
     
@@ -119,7 +120,75 @@ function createTaskActions(taskId){
     return actionContainerEl;
 }
 
+//handles checking the target clicking of the different target elements by their css class name 
+function taskButtonHandler(event){
+    //check if the event of clicking the button works
+    console.log(event.target);
+
+    //get target element from an event
+    var targetEl = event.target;
+
+    //check if edit button was clicked, if true was clicked run editTask function on the taskId
+    if (targetEl.matches(".edit-btn")){
+        console.log("you clicked an edit button!");
+        var taskId = targetEl.getAttribute("data-task-id");
+        editTask(taskId);
+    }
+
+    //check if delete button was clicked, if true was clicked run deleteTask function on the taskId 
+    else if (event.target.matches(".delete-btn")){
+        console.log("you clicked a delete button!");
+        //get the element's task id and print it to the console
+        var taskId = event.target.getAttribute("data-task-id");
+        //console.log("task button handler is showing this element's task id: " + taskId);
+        //call delete task function
+        deleteTask(taskId);
+        
+    }
+}
+
+function editTask(taskId){
+    //get task list item element to edit
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    //check to see if function is getting the task id by clicking the edit button
+    console.log("editing task #: " + taskId);
+    //get our javascript defined textContent from task name and type based on their CSS class selector name that we assigned it previously
+    //keep in mind the <h3> and <span> were dynamically generated in JavaScript! These are not natively in the HTML!
+    var taskName = taskSelected.querySelector("h3.task-name").textContent;
+    console.log("editing taskName: ");
+    console.log(taskName);
+    var taskType = taskSelected.querySelector("span.task-type").textContent;
+    console.log("editing taskType: ");
+    console.log(taskType);
+
+    //make it clear to the user that the form is now in "edit mode"
+    //changing the textContent within the element of the native HTML document that has the id="#save-task"
+    document.querySelector("#save-task").textContent = "Save Task";
+
+    formEl.setAttribute("data-task-id", taskId);
+
+}
+
+
+function deleteTask(taskId){
+    //get the task list item element to delete
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+    
+    //console.log("console logging the taskSelected which to delete: ");
+    //have to console log this separately otherwise chrome shows taskSelected as HTMLLIObject if concatted with the string in the same console log
+    //console.log(taskSelected);
+    //this is simply getting the attribute to display the data-task-id of the task item's delete button
+    //var taskId = event.target.getAttribute("data-task-id");
+    //console.log("called the function delete task for the task id: " + taskId);
+    
+    //this will remove the task-item but the 
+    taskSelected.remove();
+}
+//submit the task into the form via clicking the Add Task button
 formEl.addEventListener("submit", taskFormHandler);
+
+//handles the buttons inside the task box containing the task name and the buttons for edit delete 
+pageContentEl.addEventListener("click", taskButtonHandler);
 
 //buttonEl.addEventListener("click", createTaskHandler);
 //console.log(buttonElement);
