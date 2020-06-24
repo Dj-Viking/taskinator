@@ -1,9 +1,11 @@
 console.dir(window.document);
 
+
+//assigning variables to the HTML DOM elements by their assigned id's within the HTML
 var formEl = document.querySelector("#task-form");
 var buttonEl = document.querySelector("#save-task");
 var tasksToDoEl = document.querySelector("#tasks-to-do");
-var pageContentEl = document.querySelector("#page-content");
+var pageContentEl = document.querySelector("#page-content");//main section
 var taskNameInput = document.querySelector("input[name='task-name']");
 var taskIdCounter = 0;
 var tasksInProgressEl = document.querySelector("#tasks-in-progress");
@@ -106,8 +108,10 @@ function createTaskEl(taskDataObj){
     var listItemEl = document.createElement("li");
     //assigning the CSS class to HTML element we created <li>
     listItemEl.className = "task-item";//not entering any text here just creating the list item to contain something inside it
-    //add task id as a custom attribute
+    //add task id as a custom attribute as if you're writing it as inline HTML styling
     listItemEl.setAttribute("data-task-id", taskIdCounter);
+    //adding the draggable attribute to the dynamically generated list items as if we are writing it as inline HTML styling
+    listItemEl.setAttribute("draggable", "true");
     //listItemEl.textContent = "Task # " + taskIdCounter;
     console.log("task Id: " + taskIdCounter);
 
@@ -152,6 +156,7 @@ function createTaskActions(taskId){
 
     actionContainerEl.appendChild(deleteButtonEl);
 
+    //creating something to make the select dropdown menu link to the actual button that changes the status of the list item we have selected
     var statusSelectEl = document.createElement("select");
     statusSelectEl.className = "select-status";
     statusSelectEl.setAttribute("name", "status-change");
@@ -237,12 +242,47 @@ function deleteTask(taskId){
     //this will remove the task-item but the 
     taskSelected.remove();
 }
+
+//function to handle the drag attribute
+function dragTaskHandler(){
+    //check to see if the function is targeting the correct HTML DOM element
+    //console.log("we are targeting this DOM element: ", event.target);
+    //console.log("we are targeting this event type: ", event.type);
+    //console.log("we are targeting this event: ", event);
+
+    //create variable to store the task id of the element we are targeting and then console log it.
+    var taskId = event.target.getAttribute("data-task-id");
+    //check to see if we are dragging the correct taskId
+    console.log("simply reading the Task ID of this DOM element: ", taskId);
+
+    //store the taskId in the dataTransfer property of the event
+    //set data recieves two arguments, first states the format of the data, second states the value of the data
+    event.dataTransfer.setData("text/plain", taskId);
+    //check to see if we are getting the correct data that we set in the data transfer
+    var getId = event.dataTransfer.getData("text/plain");
+    console.log("getting the data from the getId variable!!: ");
+    console.log("task ID we are getting: ", getId);
+    console.log("data type of the ID we are getting: ", typeof getId);
+
+
+
+
+
+}
+
+
 //submit the task into the form via clicking the Add Task button
 formEl.addEventListener("submit", taskFormHandler);
 
 //handles the buttons inside the task box containing the task name and the buttons for edit delete 
 pageContentEl.addEventListener("click", taskButtonHandler);
 
+//listens for the event to change based on the result from the taskStatusChangeHandler() function
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
+
+//listens for the event to start the dragging based on the result from dragTaskHandler() function
+//make sure the function calls inside the eventListener are placed ABOVE the eventListener!! or you will get uncaught reference error
+pageContentEl.addEventListener("dragstart", dragTaskHandler);
+
 //buttonEl.addEventListener("click", createTaskHandler);
 //console.log(buttonElement);
