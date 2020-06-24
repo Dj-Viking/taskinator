@@ -6,6 +6,8 @@ var tasksToDoEl = document.querySelector("#tasks-to-do");
 var pageContentEl = document.querySelector("#page-content");
 var taskNameInput = document.querySelector("input[name='task-name']");
 var taskIdCounter = 0;
+var tasksInProgressEl = document.querySelector("#tasks-in-progress");
+var tasksCompletedEl = document.querySelector("#tasks-completed");
 //taskNameInput = "here is the string stored in taskNameInput variable";
 //check if its working  
 //console.log(taskNameInput);
@@ -17,19 +19,36 @@ function taskFormHandler(event){
     //cool it works. this will store whatever value we type into the text field to be stored into this variable.
     var taskNameInput = document.querySelector("input[name='task-name']").value;
     //checking if its working
+    console.log("taskNameInput has been assigned a value!!");
     console.dir(taskNameInput);
     //this is attaching the task type that we select from the dropdown menu 
     var taskTypeInput = document.querySelector("select[name='task-type']").value;
+    console.log("taskTypeInput has been assigned a value!!");
     console.log(taskTypeInput);//check if its storing correctly
     
-    //package up data as an object
-    //this is passed into the parameter (event) from the function argument below (taskDataObj)
-    var taskDataObj =
-    {
-        name: taskNameInput,
-        type: taskTypeInput
-        
-    };
+    
+    
+    //checking if the form is in edit mode true or false
+    var isEdit = formEl.hasAttribute("data-task-id");
+    //console.log("below this log is saying its true or false that we are in EDIT MODE:")
+    //console.log(isEdit);
+    if(isEdit){//if true we are in EDIT MODE
+        var taskId = formEl.getAttribute("data-task-id");
+        completeEditTask(taskNameInput, taskTypeInput, taskId);
+    //if no data attribute, create the object as normal and pass to createTaskEl() function
+    } else {// if isEdit is false we are NOT in EDIT MODE 
+        //package up data as an object
+        //this is passed into the parameter (event) from the function argument below (taskDataObj)
+        var taskDataObj =
+        {
+            name: taskNameInput,
+            type: taskTypeInput
+            
+        };
+        createTaskEl(taskDataObj);
+        //ORDER IS IMPORTANT AND SPELLING TOO
+        console.log(event);
+    }
     //check if input values are empty strings
     //if the strings entered are NOT filled out or empty it is considered a falsy value
     //if its NOT true that a string is entered essentially
@@ -38,15 +57,49 @@ function taskFormHandler(event){
         formEl.reset();//this must be placed before the return statement!!`
         return false;
     }
-    createTaskEl(taskDataObj);
-    //ORDER IS IMPORTANT AND SPELLING TOO
-    console.log(event);
 }
 
+function taskStatusChangeHandler(event){
+    //get the task items id
+    var taskId = event.target.getAttribute("data-task-id");
 
-// function createTaskEl(taskDataObj){
+    //get the currently selected option's value and convert to lowercase
+    var statusValue = event.target.value.toLowerCase();
 
-// 
+    // find the parent task item element based on the id
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    //if the item inside the dropdown menu is selected then...
+    //append the children elements with the data inside to the parent element specified
+    if(statusValue === "to do"){
+        tasksToDoEl.appendChild(taskSelected);
+    } else if (statusValue === "in progress"){
+        tasksInProgressEl.appendChild(taskSelected);
+    } else if (statusValue === "completed"){
+        tasksCompletedEl.appendChild(taskSelected);
+    }
+}
+
+function completeEditTask(taskName, taskType, taskId){
+    //making sure that this function is getting the data it needs
+    //console.log("making sure that this complete edit function is getting the data it needs:")
+    //console.log(taskName, taskType, taskId);
+
+    //find the matching task list item by its CSS class name and task id number
+    var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
+
+    //set new values to the textContent in the dynamically generated HTML elements with their JS assigned class names
+    taskSelected.querySelector("h3.task-name").textContent = taskName;
+    taskSelected.querySelector("span.task-type").textContent = taskType;
+
+    alert("Task Updated!");
+    console.log("Task Updated!");
+
+    //reset the form by removing the task ID and changing the button text back to normal after Saving the task
+    formEl.removeAttribute("data-task-id");
+    document.querySelector("#save-task").textContent = "Add Task";
+
+}
 
 function createTaskEl(taskDataObj){
     //dynamically creates a new <li> element inside existing HTML code
@@ -190,5 +243,6 @@ formEl.addEventListener("submit", taskFormHandler);
 //handles the buttons inside the task box containing the task name and the buttons for edit delete 
 pageContentEl.addEventListener("click", taskButtonHandler);
 
+pageContentEl.addEventListener("change", taskStatusChangeHandler);
 //buttonEl.addEventListener("click", createTaskHandler);
 //console.log(buttonElement);
