@@ -227,7 +227,7 @@ function editTask(taskId){
 
 }
 
-
+//function handles deleting the task
 function deleteTask(taskId){
     //get the task list item element to delete
     var taskSelected = document.querySelector(".task-item[data-task-id='" + taskId + "']");
@@ -253,25 +253,116 @@ function dragTaskHandler(){
     //create variable to store the task id of the element we are targeting and then console log it.
     var taskId = event.target.getAttribute("data-task-id");
     //check to see if we are dragging the correct taskId
-    console.log("simply reading the Task ID of this DOM element: ", taskId);
+    console.log("dragTaskHandler is simply reading the Task ID of this DOM element: ", taskId);
 
     //store the taskId in the dataTransfer property of the event
     //set data recieves two arguments, first states the format of the data, second states the value of the data
     event.dataTransfer.setData("text/plain", taskId);
     //check to see if we are getting the correct data that we set in the data transfer
     var getId = event.dataTransfer.getData("text/plain");
-    console.log("getting the data from the getId variable!!: ");
-    console.log("task ID we are getting: ", getId);
-    console.log("data type of the ID we are getting: ", typeof getId);
-
-
-
-
-
+    console.log("dragTaskHandler is getting the data from the getId variable that we set!!!: ");
+    console.log("task ID that dragTaskHandler is getting: ", getId);
+    console.log("data type of the ID dragTaskHandler is getting: ", typeof getId);
 }
 
+//function handles the dragging movement of the DOM HTML element
+function dropZoneDragHandler(event){
+    //this event.preventDefault function allows the element to be dropped!
+    //but you need to specify where in a separate function that will "drop" it in the specified place
+    //event.preventDefault();
+    
+    //this logs for every pixel instance that the DOM element is moving over...logs a lot!!!
+    //console.log("Targeting the Dragover event on this HTML DOM element: ", event.target);
 
-//submit the task into the form via clicking the Add Task button
+    //need this to specify which query selector we are searching which is the closest
+    //in this case we are using the CSS class for the query selector
+    //the event of dragging is targeting the closest element by the CSS class name .task-list
+    event.target.closest(".task-list");
+    //store the value of the event targeting the closest element with the same class name
+    var taskListEl = event.target.closest(".task-list");
+    //if the value is true its the closest - do these things.
+    //also doesn't allow the element to be dropped anywhere except the closest!!!
+    if (taskListEl){//true
+        event.preventDefault();//make sure we can drop it somewhere and doesn't default back to original place
+        //console dir to verify the element dropzone is what we want!!
+        //console.dir(taskListEl);//if true also print to console which element it is which is closest based on the CSS class selector argument
+    }
+    //******** REFERENCE CODE COMMENT ******* */
+    //*******the function below checks to see if the dragging DOM element is a descendent element of the task list 
+    //or the task list element itself
+    //originates a search from the target element for an element that contains the selector
+    //if the element with the selector is found, its returned as a DOM element, 
+    //if not this function will return null
+    //******targetElement.closest(selector); this is the example format DO NOT USE THIS WE DID NOT DEFINE targetElement
+}
+
+function dropTaskHandler(event){
+
+    //checking to see if the element we are dropping onto is receiving the correct data
+    //we also previously handled the closest element so that anything we drop onto we will not transfer data to any element except the closest()
+    var dropId = event.dataTransfer.getData("text/plain");
+    //console.log("Result of the dropTaskHandler getting the data from our event: ");
+    //console.log("Event drop target: ", event.target);
+    //console.log("Event drop DataTransfer: ", event.dataTransfer);
+    //console.log("Element id string value which we received from the drop data transfer: ", id);
+
+    //storing the element specified with the element from the DOM using the querySelector to specify 
+    //the element by the HTML attribute text which we previously dynamically generated as "data-task-id="
+    //id number from the getData transfer into a var as the draggableElement we want to drop
+    var draggableElement = document.querySelector("[data-task-id='" + dropId + "']");
+    //checking to see if what we dropped onto is what we want
+    console.log("Logging HTML DOM element we dragged: ", draggableElement);
+    console.log("Logging the HTML DOM directory we dragged: ");
+    //**this will show a directory and make sure that the parent element we want to append onto
+    //**is the one we dropped onto!! search into the dir and check parentElement
+    console.dir(draggableElement);
+
+    //store the element name that is closest which has the same CSS selector as ".task-list"
+    var dropZoneEl = event.target.closest(".task-list");
+    //store the id string associated with our closest identified parent element as statusType
+    var statusType = dropZoneEl.id;
+    console.log("Logging the parent element that we want to append to: ");
+    console.log(statusType);
+    console.log("Logging the parent element directory that we want to append to displayed as the id='string' in the native HTML document: ");
+    console.dir(dropZoneEl);
+
+    //set HTML status element as the document object which is the same as
+    //the previously dynamically created attribute to be the same as our draggableElement
+    //so that dragging the element does the same as selecting the status from the dropdown menu
+    var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
+    //check to see if the function call dropTaskHandler() is producing the same result as selecting the status change
+    //in the status change dropdown menu
+    console.log(statusSelectEl);
+    console.dir(statusSelectEl);
+    //**NOTE** */
+    //querySelector traverses down form the reference point
+    //while closest() traverses up to ancestor elements
+    //to the root document from the reference element.
+
+    //check to see if the dragged element is dropped into
+    //one of these parent elements according to their names
+    //which matches the id string associated with the native HTML <ul> parent element
+    //so we know what parent element we want to append to
+    if(statusType === "tasks-to-do"){
+        statusSelectEl.selectedIndex = 0;
+    } else if (statusType === "tasks-in-progress"){
+        statusSelectEl.selectedIndex = 1;
+    } else if (statusType === "tasks-completed"){
+        statusSelectEl.selectedIndex = 2;
+    }//NOTE selectedIndex: allows us to set the displayed option in a list by specifying
+    //the option's 0-based position in the list (where 0 is the first list option etc.)
+    //By assigning a number to selectedIndex, we're selecting the option that we want to display
+    // in the <select> element. our code maps the statusType's id string values to option
+    //numbers, and sets the selectedIndex value appropriately.
+
+    //final step: appendchild(draggableElement);
+    //we are appending our draggablechild element into
+    //the parent element which is the dropZone
+    dropZoneEl.appendChild(draggableElement);
+}
+
+//make sure the function calls inside the eventListener are placed ABOVE the eventListener!! or you will get uncaught reference error
+//submit the task into the main section via clicking the Add Task button
 formEl.addEventListener("submit", taskFormHandler);
 
 //handles the buttons inside the task box containing the task name and the buttons for edit delete 
@@ -281,8 +372,13 @@ pageContentEl.addEventListener("click", taskButtonHandler);
 pageContentEl.addEventListener("change", taskStatusChangeHandler);
 
 //listens for the event to start the dragging based on the result from dragTaskHandler() function
-//make sure the function calls inside the eventListener are placed ABOVE the eventListener!! or you will get uncaught reference error
 pageContentEl.addEventListener("dragstart", dragTaskHandler);
+
+//listens for the event to start the dragover based on the result from dropZoneDragHandler() function
+pageContentEl.addEventListener("dragover", dropZoneDragHandler);
+
+//listens for the event to start the dropping of DOM element based on the result of the dropTaskHandler() function
+pageContentEl.addEventListener("drop", dropTaskHandler);
 
 //buttonEl.addEventListener("click", createTaskHandler);
 //console.log(buttonElement);
