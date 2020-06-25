@@ -99,8 +99,12 @@ function taskStatusChangeHandler(event){
         }
     }
     //checking if the statusValue is updated into the tasks array after selecting the status from the dropdown menu
-    console.log("check if the statusValue is updated in the tasks array after selecting from dropdown menu!!!")
+    console.log("check if the statusValue is updated in the tasks array after selecting from dropdown menu!!!");
     console.log(tasks);
+
+    //save tasks array into localStorage
+    console.log("executing saveTasks(); after updating the status in the array from selecting the dropdown menu!!");
+    saveTasks();
 }
 
 function completeEditTask(taskName, taskType, taskId){
@@ -127,6 +131,11 @@ function completeEditTask(taskName, taskType, taskId){
 
     alert("Task Updated!");
     console.log("Task Updated!");
+
+    //saving tasks array into localStorage after the task is edited and updated
+    console.log("executed saveTasks() function inside the completeEditTask function!!!");
+    saveTasks();
+
 
     //reset the form by removing the task ID and changing the button text back to normal after Saving the task
     formEl.removeAttribute("data-task-id");
@@ -162,6 +171,10 @@ function createTaskEl(taskDataObj){
     console.log("here is the tasks array with the newly stored object(s)");
     //but if edited this is not updated in this array yet
     console.log(tasks);
+
+    //saving tasks array into localStorage
+    console.log("save tasks was executed here in createTaskEl function after creating a task!!!");
+    saveTasks();
     
     var taskActionsEl = createTaskActions(taskIdCounter);
     console.log(taskActionsEl);
@@ -306,8 +319,12 @@ function deleteTask(taskId){
     //reassign tasks array to be the same as updatedTaskArr
     tasks = updatedTaskArr;
     console.log("you deleted an item from the tasks array!!");
-    console.log("tasks array currently has: ")
+    console.log("tasks array currently has: ");
     console.log(tasks);
+
+    //save tasks array after deleting a task item from the array
+    console.log("executing saveTasks() function after deleting a task item from the array!!");
+    saveTasks();
 }
 
 //function to handle the drag attribute
@@ -412,7 +429,7 @@ function dropTaskHandler(event){
             tasks[i].status = statusType
         }
     }
-    console.log("updating status in the array!!! here is your array  you are editing: ");
+    console.log("updating status in the array by dropping!!! here is your array  you are editing: ");
     console.log(tasks);
 
     console.log("Element Dropped!! Status changed!!");
@@ -453,8 +470,13 @@ function dropTaskHandler(event){
             tasks[i].status = statusSelectEl.value.toLowerCase();
         }
     }
-    console.log("Checking tasks array status change after dragging and dropping!!!")
+    console.log("Checking tasks array status change after dragging and dropping!!!");
     console.log(tasks);
+
+    //save tasks into localStorage after dragging and dropping
+    console.log("saveTask() function executed after dragging and dropping!!");
+    saveTasks();
+
 }
 
 function dragLeaveHandler(){
@@ -469,6 +491,13 @@ function dragLeaveHandler(){
     if (taskListEl){
         taskListEl.removeAttribute("style");
     }
+}
+
+function saveTasks(){
+    //have to use JavaScript Object Notation to display array values in
+    //local storage as strings. local storage can only display string values
+    //so we convert the objects into the strings that are contained in the objects
+    localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
 //make sure the function calls inside the eventListener are placed ABOVE the eventListener!! or you will get uncaught reference error
