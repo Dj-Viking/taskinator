@@ -10,6 +10,12 @@ var taskNameInput = document.querySelector("input[name='task-name']");
 var taskIdCounter = 0;
 var tasksInProgressEl = document.querySelector("#tasks-in-progress");
 var tasksCompletedEl = document.querySelector("#tasks-completed");
+
+//creating an empty array in which task data
+//can be stored later as objects in the array
+//will include id and statuses
+var tasks = [];//SEMICOLON!!!
+
 //taskNameInput = "here is the string stored in taskNameInput variable";
 //check if its working  
 //console.log(taskNameInput);
@@ -44,9 +50,14 @@ function taskFormHandler(event){
         var taskDataObj =
         {
             name: taskNameInput,
-            type: taskTypeInput
+            type: taskTypeInput,
+            status: "to do"
             
         };
+        //checking to see if the Object is being displayed correctly
+        console.log("checking if object is being stored correctly");
+        console.log(taskDataObj);
+        //console.log(taskDataObj.status);
         createTaskEl(taskDataObj);
         //ORDER IS IMPORTANT AND SPELLING TOO
         console.log(event);
@@ -80,6 +91,16 @@ function taskStatusChangeHandler(event){
     } else if (statusValue === "completed"){
         tasksCompletedEl.appendChild(taskSelected);
     }
+
+    //updated the edited task in the tasks array
+    for (var i = 0; i < tasks.length; i++){
+        if(tasks[i].id === parseInt(taskId)){
+            tasks[i].status = statusValue;
+        }
+    }
+    //checking if the statusValue is updated into the tasks array after editing
+    console.log("check if the statusValue is updated in the tasks array after selecting from dropdown menu!!!")
+    console.log(tasks);
 }
 
 function completeEditTask(taskName, taskType, taskId){
@@ -93,6 +114,16 @@ function completeEditTask(taskName, taskType, taskId){
     //set new values to the textContent in the dynamically generated HTML elements with their JS assigned class names
     taskSelected.querySelector("h3.task-name").textContent = taskName;
     taskSelected.querySelector("span.task-type").textContent = taskType;
+
+    //loop through tasks array and task object with new content
+    for (var i = 0; i < tasks.length; i++){
+        if (tasks[i].id === parseInt(taskId)){
+            tasks[i].name = taskName;
+            tasks[i].type = taskType;
+        }
+    }
+    console.log("checking if edited task is changed in tasks array after pushing save task button!!!");//have to include this into completeEditTask to fully edit the array wherever im moving it to or from so that the save task ACTUALLY saves the task
+    console.log(tasks);
 
     alert("Task Updated!");
     console.log("Task Updated!");
@@ -123,6 +154,14 @@ function createTaskEl(taskDataObj){
     taskInfoEl.innerHTML = "<h3 class='task-name'>" + taskDataObj.name + "</h3><span class='task-type'>" + taskDataObj.type + "</span>";
     //inject the innerHTML stored inside the variable taskInfoEl
     listItemEl.appendChild(taskInfoEl);
+
+    //adding the id of the task into the object
+    taskDataObj.id = taskIdCounter;
+    //push the object into the tasks array to be stored
+    tasks.push(taskDataObj);
+    console.log("here is the tasks array with the newly stored object(s)");
+    //but if edited this is not updated in this array yet
+    console.log(tasks);
     
     var taskActionsEl = createTaskActions(taskIdCounter);
     console.log(taskActionsEl);
@@ -175,6 +214,18 @@ function createTaskActions(taskId){
         //append to select
         statusSelectEl.appendChild(statusOptionEl);
     }
+
+    //loop through tasks array and task object with new content
+    // for (var i = 0; i < tasks.length; i++){
+    //     if (tasks[i].id === parseInt(taskId)){
+    //         tasks[i].name = taskName;
+    //         tasks[i].type = taskType;
+    //         //tasks[i].status = statusValue
+    //     }
+    // }
+    console.log("Changed status of Array testing here is your array which status you changed: ");//task will be edited after clicking the edit button
+    console.log(tasks);
+
     return actionContainerEl;
 }
 
@@ -219,6 +270,18 @@ function editTask(taskId){
     console.log("editing taskType: ");
     console.log(taskType);
 
+    //loop through tasks array and task object with new content
+    for (var i = 0; i < tasks.length; i++){
+        if (tasks[i].id === parseInt(taskId)){
+            tasks[i].name = taskName;
+            tasks[i].type = taskType;
+            //tasks[i].status = statusValue
+        }
+    }
+    console.log("Currently in EDIT MODE here is your array you are editing: ");//task will be edited after clicking the edit button
+    console.log(tasks);
+    
+
     //make it clear to the user that the form is now in "edit mode"
     //changing the textContent within the element of the native HTML document that has the id="#save-task"
     document.querySelector("#save-task").textContent = "Save Task";
@@ -241,6 +304,22 @@ function deleteTask(taskId){
     
     //this will remove the task-item but the next item that gets created after this one will have the next incremented id number I guess its not a huge deal.
     taskSelected.remove();
+
+    //create new array to hold updated list of tasks
+    var updatedTaskArr = [];
+
+    //loop through current tasks
+    for (var i = 0; i < tasks.length; i++){
+        //if tasks[i].id doesn't match the value of taskId, let's keep that task and push it into the new array
+        if(tasks[i].id !== parseInt(taskId)){
+            updatedTaskArr.push(tasks[i]);
+        }
+    }
+    //reassign tasks array to be the same as updatedTaskArr
+    tasks = updatedTaskArr;
+    console.log("you deleted an item from the tasks array!!");
+    console.log("tasks array currently has: ")
+    console.log(tasks);
 }
 
 //function to handle the drag attribute
@@ -336,6 +415,18 @@ function dropTaskHandler(event){
     var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
     //check to see if the function call dropTaskHandler() is producing the same result as selecting the status change
     //in the status change dropdown menu
+
+    //loop through tasks array and task object with new content
+    for (var i = 0; i < tasks.length; i++){
+        if (tasks[i].id === parseInt(dropId)){
+            //tasks[i].name = taskName;
+            //tasks[i].type = taskType;
+            tasks[i].status = statusType
+        }
+    }
+    console.log("updating status in the array!!! here is your array  you are editing: ");
+    console.log(tasks);
+
     console.log("Element Dropped!! Status changed!!");
     console.log(statusSelectEl);
     console.dir(statusSelectEl);
@@ -367,6 +458,15 @@ function dropTaskHandler(event){
     //remove the dynamic styling from the parent element after
     //the child element is appended into the dropped on parent element
     dropZoneEl.removeAttribute("style");
+
+    //loop through tasks array to find and update the updated task's status
+    for (var i = 0; i < tasks.length; i++){
+        if (tasks[i].dropId === parseInt(dropId)){
+            tasks[i].status = statusSelectEl.value.toLowerCase();
+        }
+    }
+    console.log("Checking tasks array status change after dragging and dropping!!!")
+    console.log(tasks);
 }
 
 function dragLeaveHandler(){
