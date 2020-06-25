@@ -239,7 +239,7 @@ function deleteTask(taskId){
     //var taskId = event.target.getAttribute("data-task-id");
     //console.log("called the function delete task for the task id: " + taskId);
     
-    //this will remove the task-item but the 
+    //this will remove the task-item but the next item that gets created after this one will have the next incremented id number I guess its not a huge deal.
     taskSelected.remove();
 }
 
@@ -286,6 +286,10 @@ function dropZoneDragHandler(event){
         event.preventDefault();//make sure we can drop it somewhere and doesn't default back to original place
         //console dir to verify the element dropzone is what we want!!
         //console.dir(taskListEl);//if true also print to console which element it is which is closest based on the CSS class selector argument
+        
+        //adding some dynamically generated inline HTML styling which shows 
+        //that a dragged element is being dragged over the task list element
+        taskListEl.setAttribute("style", "background: rgba(68, 233, 255, 0.7); border-style: dashed;");
     }
     //******** REFERENCE CODE COMMENT ******* */
     //*******the function below checks to see if the dragging DOM element is a descendent element of the task list 
@@ -332,6 +336,7 @@ function dropTaskHandler(event){
     var statusSelectEl = draggableElement.querySelector("select[name='status-change']");
     //check to see if the function call dropTaskHandler() is producing the same result as selecting the status change
     //in the status change dropdown menu
+    console.log("Element Dropped!! Status changed!!");
     console.log(statusSelectEl);
     console.dir(statusSelectEl);
     //**NOTE** */
@@ -359,6 +364,23 @@ function dropTaskHandler(event){
     //we are appending our draggablechild element into
     //the parent element which is the dropZone
     dropZoneEl.appendChild(draggableElement);
+    //remove the dynamic styling from the parent element after
+    //the child element is appended into the dropped on parent element
+    dropZoneEl.removeAttribute("style");
+}
+
+function dragLeaveHandler(){
+    //checking the target DOM directory which the item is being dragged over
+    //console.dir(event.target);
+
+    //here the purpose is to remove the styling from previous element
+    //from which the dragged element was last dragged from
+    //targeting the closest() parent element specified by selector .task-list
+    var taskListEl = event.target.closest(".task-list");
+    //if the value is true its the closest parent element - do these things.
+    if (taskListEl){
+        taskListEl.removeAttribute("style");
+    }
 }
 
 //make sure the function calls inside the eventListener are placed ABOVE the eventListener!! or you will get uncaught reference error
@@ -379,6 +401,9 @@ pageContentEl.addEventListener("dragover", dropZoneDragHandler);
 
 //listens for the event to start the dropping of DOM element based on the result of the dropTaskHandler() function
 pageContentEl.addEventListener("drop", dropTaskHandler);
+
+//listens for the event of the item leaving an element and manage the removal of styling
+pageContentEl.addEventListener("dragleave", dragLeaveHandler);
 
 //buttonEl.addEventListener("click", createTaskHandler);
 //console.log(buttonElement);
