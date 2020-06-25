@@ -92,13 +92,13 @@ function taskStatusChangeHandler(event){
         tasksCompletedEl.appendChild(taskSelected);
     }
 
-    //updated the edited task in the tasks array
+    //updatting the status of the task item in the tasks array
     for (var i = 0; i < tasks.length; i++){
         if(tasks[i].id === parseInt(taskId)){
             tasks[i].status = statusValue;
         }
     }
-    //checking if the statusValue is updated into the tasks array after editing
+    //checking if the statusValue is updated into the tasks array after selecting the status from the dropdown menu
     console.log("check if the statusValue is updated in the tasks array after selecting from dropdown menu!!!")
     console.log(tasks);
 }
@@ -214,18 +214,6 @@ function createTaskActions(taskId){
         //append to select
         statusSelectEl.appendChild(statusOptionEl);
     }
-
-    //loop through tasks array and task object with new content
-    // for (var i = 0; i < tasks.length; i++){
-    //     if (tasks[i].id === parseInt(taskId)){
-    //         tasks[i].name = taskName;
-    //         tasks[i].type = taskType;
-    //         //tasks[i].status = statusValue
-    //     }
-    // }
-    console.log("Changed status of Array testing here is your array which status you changed: ");//task will be edited after clicking the edit button
-    console.log(tasks);
-
     return actionContainerEl;
 }
 
